@@ -2,6 +2,13 @@
 node_modules
 /dist
 
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Yarn Integrity file
+.yarn-integrity
+
 # local env files
 .env.local
 .env.*.local
