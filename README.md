@@ -1,5 +1,23 @@
 # jitteroverlay
 
+## Setup Notes
+
+1. Use Vue CLI Tailwind command to add Tailwind support
+    See https://github.com/forsartis/vue-cli-plugin-tailwind
+
+1. Add Tailwind CSS UI support
+    * Don't forget to add the @tailwindcss/ui to the tailwind.config.js:
+    
+      ```
+      // tailwind.config.js
+      module.exports = {
+        plugins: [
+          require('@tailwindcss/ui'),
+        ]
+      }
+      ``` 
+ 
+
 ## Project setup
 ```
 yarn install
