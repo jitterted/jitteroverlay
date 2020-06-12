@@ -11,14 +11,13 @@
             </svg>
             </span>
             <p class="ml-3 font-medium text-4xl text-white truncate">
-<!--Current Task:-->
-<!--(New Project) Adjust Design of Overlay for TDD & Tasks-->
-              Question: Should I Push this to Netlify?
+              Currently:
+              Overlay - Countdown for time left until end of stream
             </p>
           </div>
           <div class="flex-shrink-0">
             <p class="ml-3 font-medium text-3xl text-orange-200 truncate">
-              Stream Ends In: 26m
+              Stream ends in {{ timeLeft }}
             </p>
           </div>
         </div>
@@ -31,6 +30,37 @@
 
 export default {
   name: 'App',
+  data() {
+    return {
+      streamEndDateTime: new Date('June 12, 2020 12:55:00'),
+      timeLeftMs: 0,
+      interval: undefined
+    }
+  },
+  computed: {
+    timeLeft() {
+      if (this.timeLeftMs > 60000) {
+        const timeLeftHours = Math.floor(this.timeLeftMs / 1000 / 60 / 60);
+        const timeLeftMinutes = Math.ceil(this.timeLeftMs / 1000 / 60);
+        return timeLeftHours + "h " + timeLeftMinutes + "m";
+      } else {
+        return "less than 1 minute";
+      }
+    }
+  },
+  methods: {
+    refresh() {
+      this.timeLeftMs = this.streamEndDateTime - Date.now();
+    }
+  },
+  created() {
+    this.refresh();
+    this.interval = setInterval(() => this.refresh(), 30000);
+  },
+  beforeDestroy() {
+    clearInterval(this.interval);
+  }
+
 }
 </script>
 
