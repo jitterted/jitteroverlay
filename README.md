@@ -23,3 +23,7 @@ This is information I could have used when initially creating this project...
         ]
       }
       ``` 
+
+## Lessons Learned
+
+* Cmd+E in IntelliJ IDEA is contextual, in the Local Changes dialog is the same as ^M for Commit Message History.
