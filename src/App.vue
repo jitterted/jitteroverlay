@@ -12,11 +12,11 @@
             </span>
             <p class="ml-3 font-medium text-4xl text-white truncate">
               Currently:
-<!--              Improving Overlay - Warn When 10 Minutes Left in Stream-->
+              <!--              Improving Overlay - Warn When 10 Minutes Left in Stream-->
               Writing Test for Overlay
-<!--              Chatting About Today's Tasks-->
-<!--              ☕️ Blackjack - Continue to Build Up the State Pattern-->
-<!--              Noting Tasks for Next Stream-->
+              <!--              Chatting About Today's Tasks-->
+              <!--              ☕️ Blackjack - Continue to Build Up the State Pattern-->
+              <!--              Noting Tasks for Next Stream-->
             </p>
           </div>
           <div class="flex-shrink-0">
@@ -42,18 +42,21 @@ export default {
     }
   },
   computed: {
-timeLeft() {
+    timeLeft() {
       if (this.isLessThanOneMinuteRemaining()) {
-        const timeLeftHours = Math.floor(this.timeLeftMs / 1000 / 60 / 60);
-        const timeLeftMinutes = Math.ceil(this.timeLeftMs / 1000 / 60) - (timeLeftHours * 60);
-        return timeLeftHours + "h " + timeLeftMinutes + "m";
+        return this.formatTimeInMs(this.timeLeftMs);
       } else {
         return "less than 1 minute";
       }
     }
   },
   methods: {
-    isLessThanOneMinuteRemaining: function () {
+    formatTimeInMs(timeLeftMs) {
+      const timeLeftHours = Math.floor(timeLeftMs / 1000 / 60 / 60);
+      const timeLeftMinutes = Math.floor(timeLeftMs / 1000 / 60) - (timeLeftHours * 60);
+      return timeLeftHours + "h " + timeLeftMinutes + "m";
+    },
+    isLessThanOneMinuteRemaining() {
       return this.timeLeftMs > 60000;
     },
     refresh() {
