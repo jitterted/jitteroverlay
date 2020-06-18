@@ -12,14 +12,14 @@
             </span>
             <p class="ml-3 font-medium text-4xl text-white truncate">
               Currently:
-              Improving Overlay - Warn When 10 Minutes Left in Stream
+<!--              Improving Overlay - Warn When 10 Minutes Left in Stream-->
+               ☕️ Blackjack - Continue to Build Up the State Pattern
               <!-- Chatting About Today's Tasks-->
-              <!-- ☕️ Blackjack - Continue to Build Up the State Pattern-->
               <!-- Noting Tasks for Next Stream-->
             </p>
           </div>
           <div class="flex-shrink-0">
-            <p class="px-2 py-1 ml-3 font-medium text-3xl truncate"
+            <p class="px-2 py-1 ml-3 font-medium text-3xl truncate transition duration-500"
                v-bind:class="[isNoteTime ? noteTimeColorClasses : normalColorClasses]"
             >
               Stream ends in {{ timeLeft }}
@@ -40,6 +40,7 @@ export default {
       streamEndDateTime: new Date('June 18, 2020 15:50:00'),
       timeLeftMs: 0,
       interval: undefined,
+      noteTimeMs: 10 * 60 * 1000, // 10 minutes
       normalColorClasses: 'text-orange-200',
       noteTimeColorClasses: 'text-indigo-800 bg-orange-200'
     }
@@ -53,7 +54,7 @@ export default {
       }
     },
     isNoteTime() {
-      return true;
+      return this.timeLeftMs < this.noteTimeMs;
     }
   },
   methods: {
