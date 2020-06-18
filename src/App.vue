@@ -12,15 +12,16 @@
             </span>
             <p class="ml-3 font-medium text-4xl text-white truncate">
               Currently:
-              <!--              Improving Overlay - Warn When 10 Minutes Left in Stream-->
-              Writing Test for Overlay
-              <!--              Chatting About Today's Tasks-->
-              <!--              ☕️ Blackjack - Continue to Build Up the State Pattern-->
-              <!--              Noting Tasks for Next Stream-->
+              Improving Overlay - Warn When 10 Minutes Left in Stream
+              <!-- Chatting About Today's Tasks-->
+              <!-- ☕️ Blackjack - Continue to Build Up the State Pattern-->
+              <!-- Noting Tasks for Next Stream-->
             </p>
           </div>
           <div class="flex-shrink-0">
-            <p class="ml-3 font-medium text-3xl text-orange-200 truncate">
+            <p class="px-2 py-1 ml-3 font-medium text-3xl truncate"
+               v-bind:class="[isNoteTime ? noteTimeColorClasses : normalColorClasses]"
+            >
               Stream ends in {{ timeLeft }}
             </p>
           </div>
@@ -38,7 +39,9 @@ export default {
     return {
       streamEndDateTime: new Date('June 18, 2020 15:50:00'),
       timeLeftMs: 0,
-      interval: undefined
+      interval: undefined,
+      normalColorClasses: 'text-orange-200',
+      noteTimeColorClasses: 'text-indigo-800 bg-orange-200'
     }
   },
   computed: {
@@ -48,6 +51,9 @@ export default {
       } else {
         return "less than 1 minute";
       }
+    },
+    isNoteTime() {
+      return true;
     }
   },
   methods: {
