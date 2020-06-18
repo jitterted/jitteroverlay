@@ -12,7 +12,11 @@
             </span>
             <p class="ml-3 font-medium text-4xl text-white truncate">
               Currently:
-              Figuring out what to do next
+<!--              Improving Overlay - Warn When 10 Minutes Left in Stream-->
+              Writing Test for Overlay
+<!--              Chatting About Today's Tasks-->
+<!--              ☕️ Blackjack - Continue to Build Up the State Pattern-->
+<!--              Noting Tasks for Next Stream-->
             </p>
           </div>
           <div class="flex-shrink-0">
@@ -32,14 +36,14 @@ export default {
   name: 'App',
   data() {
     return {
-      streamEndDateTime: new Date('June 12, 2020 15:55:00'),
+      streamEndDateTime: new Date('June 18, 2020 15:50:00'),
       timeLeftMs: 0,
       interval: undefined
     }
   },
   computed: {
-    timeLeft() {
-      if (this.timeLeftMs > 60000) {
+timeLeft() {
+      if (this.isLessThanOneMinuteRemaining()) {
         const timeLeftHours = Math.floor(this.timeLeftMs / 1000 / 60 / 60);
         const timeLeftMinutes = Math.ceil(this.timeLeftMs / 1000 / 60) - (timeLeftHours * 60);
         return timeLeftHours + "h " + timeLeftMinutes + "m";
@@ -49,6 +53,9 @@ export default {
     }
   },
   methods: {
+    isLessThanOneMinuteRemaining: function () {
+      return this.timeLeftMs > 60000;
+    },
     refresh() {
       this.timeLeftMs = this.streamEndDateTime - Date.now();
     }
