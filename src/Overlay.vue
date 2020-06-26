@@ -11,15 +11,11 @@
             </svg>
             </span>
             <p class="ml-3 font-medium text-4xl text-white truncate">
-              Currently:
-              Improving Overlay - Setting the Stream End Time
+              Currently: {{ currentlyDoing }}
 <!--               ☕️ Blackjack - Continue to Build Up the State Pattern-->
 <!--               ☕️ Blackjack - Refactoring to Transition-based State Machine-->
 <!--              Fixing the JitterShout Twitch Team Shout-out Bot-->
 <!--              Add Spring-based User Interface to Yacht (Yahtzee-like game)-->
-<!--              "What to do next?" Poll-->
-              <!-- Chatting About Today's Tasks-->
-              <!-- Noting Tasks for Next Stream-->
             </p>
           </div>
           <div class="flex-shrink-0">
@@ -36,17 +32,23 @@
 </template>
 
 <script>
+import startOfToday from 'date-fns/startOfToday'
+import addHours from 'date-fns/addHours'
+import addMinutes from 'date-fns/addMinutes'
+import { Client } from '@stomp/stompjs';
 
 export default {
-  name: 'App',
+  name: 'Overlay',
   data() {
     return {
-      streamEndDateTime: new Date('June 23, 2020 11:59:00'),
+      streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 15),
       timeLeftMs: 0,
       interval: undefined,
       noteTimeMs: 10 * 60 * 1000, // 10 minutes
       normalColorClasses: 'text-orange-200',
-      noteTimeColorClasses: 'text-indigo-800 bg-orange-200'
+      noteTimeColorClasses: 'text-indigo-800 bg-orange-200',
+      trelloTask: 'placeholder',
+      subscription: undefined
     }
   },
   computed: {
@@ -59,6 +61,9 @@ export default {
     },
     isNoteTime() {
       return this.timeLeftMs < this.noteTimeMs;
+    },
+    currentlyDoing() {
+      return this.trelloTask
     }
   },
   methods: {
@@ -72,16 +77,38 @@ export default {
     },
     refresh() {
       this.timeLeftMs = this.streamEndDateTime - Date.now();
+    },
+    updateCurrentTask() {
+      const toDoListOfCardsUrl = 'https://api.trello.com/1/lists/5ee298bac53199290301955a/cards?fields=name';
+      fetch(toDoListOfCardsUrl)
+        .then(response => response.json())
+        .then(cards => {
+          if (cards.length > 1) {
+            this.trelloTask = cards[1].name
+          } else {
+            this.trelloTask = "Nothing...yet?"
+          }
+        });
     }
-  },
-  created() {
+  }, created() {
+    this.updateCurrentTask();
     this.refresh();
     this.interval = setInterval(() => this.refresh(), 30000);
+    const client = new Client({
+      brokerURL: "ws://192.168.0.100:8888/api/ws"
+      // , debug: function (str) {
+      //   console.log(str);
+      // }
+    });
+    const callback = this.updateCurrentTask
+    client.onConnect = function() {
+      this.subscription = client.subscribe("/topic/trello", callback);
+    }
+    client.activate()
   },
   beforeDestroy() {
     clearInterval(this.interval);
   }
-
 }
 </script>
 

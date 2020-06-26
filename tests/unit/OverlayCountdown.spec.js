@@ -1,18 +1,18 @@
 import {shallowMount} from '@vue/test-utils'
-import App from '@/Overlay.vue'
+import Overlay from '@/Overlay.vue'
 
 // Mount the component
-const wrapper = shallowMount(App)
+const wrapper = shallowMount(Overlay)
 
 describe('JitterOverlay', () => {
   // Inspect the raw component options
   it('has a "created" hook', () => {
-    expect(typeof App.created).toBe('function')
+    expect(typeof Overlay.created).toBe('function')
   })
 
   it('initialize time left to 0', () => {
-    expect(typeof App.data).toBe('function')
-    const defaultData = App.data()
+    expect(typeof Overlay.data).toBe('function')
+    const defaultData = Overlay.data()
     expect(defaultData.timeLeftMs).toBe(0)
   })
 
