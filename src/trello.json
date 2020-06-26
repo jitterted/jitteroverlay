@@ -1,0 +1,114 @@
+[
+  {
+    "id": "5ee298bac531992903019577",
+    "checkItemStates": null,
+    "closed": false,
+    "dateLastActivity": "2020-06-11T20:48:59.473Z",
+    "desc": "These are the things that folks are working on.\n\nAll our engineers should have at least one item in this state.\n\nIf there are too few things here, they should be pulled off Todo.\n\nWhen doing is done, cards move to Code Review.",
+    "descData": null,
+    "dueReminder": null,
+    "idBoard": "5ee298bac531992903019556",
+    "idList": "5ee298bac53199290301955a",
+    "idMembersVoted": [],
+    "idShort": 4,
+    "idAttachmentCover": "5ee298bbc53199290301960e",
+    "idLabels": [],
+    "manualCoverAttachment": true,
+    "name": "Doing",
+    "pos": 16384,
+    "shortLink": "ONPaAthf",
+    "isTemplate": false,
+    "badges": {
+      "attachmentsByType": {
+        "trello": {
+          "board": 0,
+          "card": 0
+        }
+      },
+      "location": false,
+      "votes": 0,
+      "viewingMemberVoted": false,
+      "subscribed": false,
+      "fogbugz": "",
+      "checkItems": 0,
+      "checkItemsChecked": 0,
+      "checkItemsEarliestDue": null,
+      "comments": 0,
+      "attachments": 1,
+      "description": true,
+      "due": null,
+      "dueComplete": false
+    },
+    "dueComplete": false,
+    "due": null,
+    "idChecklists": [],
+    "idMembers": [],
+    "labels": [],
+    "shortUrl": "https://trello.com/c/ONPaAthf",
+    "subscribed": false,
+    "url": "https://trello.com/c/ONPaAthf/4-doing",
+    "cover": {
+      "idAttachment": "5ee298bbc53199290301960e",
+      "color": null,
+      "idUploadedBackground": null,
+      "size": "normal",
+      "brightness": "light"
+    }
+  },
+  {
+    "id": "5ee2a9d44790262ed8307448",
+    "checkItemStates": null,
+    "closed": false,
+    "dateLastActivity": "2020-06-25T20:15:09.204Z",
+    "desc": "",
+    "descData": null,
+    "dueReminder": null,
+    "idBoard": "5ee298bac531992903019556",
+    "idList": "5ee298bac53199290301955a",
+    "idMembersVoted": [],
+    "idShort": 20,
+    "idAttachmentCover": null,
+    "idLabels": [],
+    "manualCoverAttachment": false,
+    "name": "Link to Trello",
+    "pos": 475136,
+    "shortLink": "LuePIzZ2",
+    "isTemplate": false,
+    "badges": {
+      "attachmentsByType": {
+        "trello": {
+          "board": 0,
+          "card": 0
+        }
+      },
+      "location": false,
+      "votes": 0,
+      "viewingMemberVoted": false,
+      "subscribed": false,
+      "fogbugz": "",
+      "checkItems": 0,
+      "checkItemsChecked": 0,
+      "checkItemsEarliestDue": null,
+      "comments": 0,
+      "attachments": 0,
+      "description": false,
+      "due": null,
+      "dueComplete": false
+    },
+    "dueComplete": false,
+    "due": null,
+    "idChecklists": [],
+    "idMembers": [],
+    "labels": [],
+    "shortUrl": "https://trello.com/c/LuePIzZ2",
+    "subscribed": false,
+    "url": "https://trello.com/c/LuePIzZ2/20-link-to-trello",
+    "cover": {
+      "idAttachment": null,
+      "color": null,
+      "idUploadedBackground": null,
+      "size": "normal",
+      "brightness": "light"
+    }
+  }
+]
