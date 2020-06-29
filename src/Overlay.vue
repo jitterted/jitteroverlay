@@ -41,7 +41,7 @@ export default {
   name: 'Overlay',
   data() {
     return {
-      streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 15),
+      streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
       timeLeftMs: 0,
       interval: undefined,
       noteTimeMs: 10 * 60 * 1000, // 10 minutes
@@ -95,7 +95,7 @@ export default {
     this.refresh();
     this.interval = setInterval(() => this.refresh(), 30000);
     const client = new Client({
-      brokerURL: "ws://192.168.0.100:8888/api/ws"
+      brokerURL: "ws://jitterted-webhook-proxy.herokuapp.com/api/ws"
       // , debug: function (str) {
       //   console.log(str);
       // }
