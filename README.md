@@ -4,6 +4,10 @@
 
 See the Trello board for this project at https://trello.com/b/wKSOndRf/jitterted-overlays
 
+## Screenshot
+
+<img src="Trello Overlay 2020-06-29 Monday.jpg" width="33%" alt="Screenshot of Trello Overlay in Action">
+
 ## Setup Notes
 
 This is information I could have used when initially creating this project...
