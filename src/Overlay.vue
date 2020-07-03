@@ -12,10 +12,10 @@
             </span>
             <p class="ml-3 font-medium text-4xl text-white truncate">
               Currently: {{ currentlyDoing }}
-<!--               ☕️ Blackjack - Continue to Build Up the State Pattern-->
-<!--               ☕️ Blackjack - Refactoring to Transition-based State Machine-->
-<!--              Fixing the JitterShout Twitch Team Shout-out Bot-->
-<!--              Add Spring-based User Interface to Yacht (Yahtzee-like game)-->
+              <!--               ☕️ Blackjack - Continue to Build Up the State Pattern-->
+              <!--               ☕️ Blackjack - Refactoring to Transition-based State Machine-->
+              <!--              Fixing the JitterShout Twitch Team Shout-out Bot-->
+              <!--              Add Spring-based User Interface to Yacht (Yahtzee-like game)-->
             </p>
           </div>
           <div class="flex-shrink-0">
@@ -32,84 +32,116 @@
 </template>
 
 <script>
-import startOfToday from 'date-fns/startOfToday'
-import addHours from 'date-fns/addHours'
-import addMinutes from 'date-fns/addMinutes'
-import { Client } from '@stomp/stompjs';
+  import startOfToday from 'date-fns/startOfToday'
+  import addHours from 'date-fns/addHours'
+  import addMinutes from 'date-fns/addMinutes'
+  import {Client} from '@stomp/stompjs';
 
-export default {
-  name: 'Overlay',
-  data() {
-    return {
-      streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
-      timeLeftMs: 0,
-      interval: undefined,
-      noteTimeMs: 10 * 60 * 1000, // 10 minutes
-      normalColorClasses: 'text-orange-200',
-      noteTimeColorClasses: 'text-indigo-800 bg-orange-200',
-      trelloTask: 'placeholder',
-      subscription: undefined
-    }
-  },
-  computed: {
-    timeLeft() {
-      if (this.isLessThanOneMinuteRemaining()) {
-        return this.formatTimeInMs(this.timeLeftMs);
-      } else {
-        return "less than 1 minute";
+  export default {
+    name: 'Overlay',
+    data() {
+      return {
+        streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
+        timeLeftMs: 0,
+        interval: undefined,
+        noteTimeMs: 10 * 60 * 1000, // 10 minutes
+        normalColorClasses: 'text-orange-200',
+        noteTimeColorClasses: 'text-indigo-800 bg-orange-200',
+        trelloTask: 'placeholder',
+        subscription: undefined,
+        client: undefined
       }
     },
-    isNoteTime() {
-      return this.timeLeftMs < this.noteTimeMs;
+    computed: {
+      timeLeft() {
+        if (this.isLessThanOneMinuteRemaining()) {
+          return this.formatTimeInMs(this.timeLeftMs);
+        } else {
+          return "less than 1 minute";
+        }
+      },
+      isNoteTime() {
+        return this.timeLeftMs < this.noteTimeMs;
+      },
+      currentlyDoing() {
+        return this.trelloTask
+      }
     },
-    currentlyDoing() {
-      return this.trelloTask
-    }
-  },
-  methods: {
-    formatTimeInMs(timeLeftMs) {
-      const timeLeftHours = Math.floor(timeLeftMs / 1000 / 60 / 60);
-      const timeLeftMinutes = Math.floor(timeLeftMs / 1000 / 60) - (timeLeftHours * 60);
-      return timeLeftHours + "h " + timeLeftMinutes + "m";
-    },
-    isLessThanOneMinuteRemaining() {
-      return this.timeLeftMs > 60000;
-    },
-    refresh() {
-      this.timeLeftMs = this.streamEndDateTime - Date.now();
-    },
-    updateCurrentTask() {
-      const toDoListOfCardsUrl = 'https://api.trello.com/1/lists/5ee298bac53199290301955a/cards?fields=name';
-      fetch(toDoListOfCardsUrl)
-        .then(response => response.json())
-        .then(cards => {
-          if (cards.length > 1) {
-            this.trelloTask = cards[1].name
-          } else {
-            this.trelloTask = "Nothing...yet?"
+    methods: {
+      formatTimeInMs(timeLeftMs) {
+        const timeLeftHours = Math.floor(timeLeftMs / 1000 / 60 / 60);
+        const timeLeftMinutes = Math.floor(timeLeftMs / 1000 / 60) - (timeLeftHours * 60);
+        return timeLeftHours + "h " + timeLeftMinutes + "m";
+      },
+      isLessThanOneMinuteRemaining() {
+        return this.timeLeftMs > 60000;
+      },
+      refreshTimeLeft() {
+        this.timeLeftMs = this.streamEndDateTime - Date.now();
+      },
+      websocketMessageDispatcher(event) {
+        const message = JSON.parse(event.body);
+        console.log("Event received:", message);
+        console.log("Callback Name:", message.callbackName);
+        if (message.callbackName === "stream_schedule") {
+          this.updateStreamEndTimeFromTrello();
+        } else if (message.callbackName === "doing") {
+          this.updateCurrentTask();
+        }
+      },
+      updateCurrentTask() {
+        const toDoListOfCardsUrl = 'https://api.trello.com/1/lists/5ee298bac53199290301955a/cards?fields=name';
+        fetch(toDoListOfCardsUrl)
+          .then(response => response.json())
+          .then(cards => {
+            if (cards.length > 1) {
+              this.trelloTask = cards[1].name
+            } else {
+              this.trelloTask = "Nothing...yet?"
+            }
+          });
+      },
+      updateStreamEndTimeFromTrello() {
+        console.log("Updating Stream Schedule, fetching from Trello...");
+        const streamScheduleCardListUrl = "https://api.trello.com/1/lists/5ef67927c7c4100d3998a842/cards?fields=name";
+        fetch(streamScheduleCardListUrl)
+          .then(response => response.json())
+          .then(cards => {
+            console.log("Cards from Stream Schedule list: ", cards)
+            const timeComponents = cards[0].name.split(':');
+            const hours = timeComponents[0];
+            const minutes = timeComponents[1];
+            this.streamEndDateTime = addMinutes(addHours(startOfToday(), hours), minutes);
+            this.refreshTimeLeft();
+          })
+      },
+      createWebSocketAndSubscribeWith(callback) {
+        const client = new Client({
+          brokerURL: "ws://jitterted-webhook-proxy.herokuapp.com/api/ws"
+          // brokerURL: "ws://4cae77f50ec5.ngrok.io/api/ws"
+          , debug: function (str) {
+            console.log(str);
           }
         });
+        client.onConnect = function () {
+          this.subscription = client.subscribe("/topic/trello", callback);
+        }
+        client.activate();
+        return client;
+      },
+    },
+    created() {
+      this.updateCurrentTask();
+      this.refreshTimeLeft();
+      this.interval = setInterval(() => this.refreshTimeLeft(), 30000);
+      this.client = this.createWebSocketAndSubscribeWith(this.websocketMessageDispatcher);
+    },
+    beforeDestroy() {
+      if (this.interval) clearInterval(this.interval);
+      if (this.subscription) this.subscription.unsubscribe();
+      if (this.client) this.client.deactivate();
     }
-  }, created() {
-    this.updateCurrentTask();
-    this.refresh();
-    this.interval = setInterval(() => this.refresh(), 30000);
-    const client = new Client({
-      brokerURL: "ws://jitterted-webhook-proxy.herokuapp.com/api/ws"
-      // , debug: function (str) {
-      //   console.log(str);
-      // }
-    });
-    const callback = this.updateCurrentTask
-    client.onConnect = function() {
-      this.subscription = client.subscribe("/topic/trello", callback);
-    }
-    client.activate()
-  },
-  beforeDestroy() {
-    clearInterval(this.interval);
   }
-}
 </script>
 
 <style>

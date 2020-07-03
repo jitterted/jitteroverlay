@@ -28,6 +28,14 @@ This is information I could have used when initially creating this project...
       }
       ``` 
 
+## TO DO for Today
+
+1. Get list id for the Stream Schedule list from Trello
+2. Add webhook registration for that list
+3. Get first card in that list
+4. Parse contents of "name" as a time
+5. Updated timeLeft property to use new time
+
 ## Lessons Learned
 
 * Cmd+E in IntelliJ IDEA is contextual, in the Local Changes dialog is the same as ^M for Commit Message History.
@@ -38,4 +46,6 @@ This is information I could have used when initially creating this project...
   router-view component, where the actual pages are in separate components.
 
 * For writing unit tests of the routing, example from https://medium.com/@sarngru/vue-router-unit-testing-navigation-6cc0b0f86811
+
+(Thursday July 2 2020)
 

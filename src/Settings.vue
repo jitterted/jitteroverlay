@@ -1,8 +1,12 @@
 <template>
   <div>
-    Placeholder for Settings page
+    <h1>Choose List to Watch from Trello Board</h1>
     <br/>
-    Title = {{ title }}
+    <ol>
+      <li v-for="list in lists" v-bind:key="list.id">
+        {{ list.name }} ({{ list.id }})
+      </li>
+    </ol>
   </div>
 </template>
 
@@ -11,16 +15,17 @@
     name: "Settings",
     data() {
       return {
-        title: "No Title Yet"
+        lists: []
       }
     },
     methods: {},
     mounted() {
-      const toDoListOfCardsUrl = 'https://api.trello.com/1/lists/5ee298bac53199290301955a/cards?fields=name';
-      fetch(toDoListOfCardsUrl)
+      const jittertedOverlayBoardId = "5ee298bac531992903019556";
+      const allListsOnBoardUrl = "https://api.trello.com/1/boards/" + jittertedOverlayBoardId + "/lists?fields=id,name"
+      fetch(allListsOnBoardUrl)
         .then(response => response.json())
-        .then(cards => {
-          this.title = cards[1].name
+        .then(lists => {
+          this.lists = lists;
         });
     }
   }
