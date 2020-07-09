@@ -28,7 +28,7 @@
     "eslint-plugin-vue": "^6.2.2",
     "vue-cli-plugin-tailwind": "^1.4.1",
     "vue-template-compiler": "^2.6.11",
-    "vue-test-utils-helpers": "git+ssh://git@github.com/AmpleOrganics/vue-test-utils-helpers.git"
+    "vue-test-utils-helpers": "git+https://github.com/AmpleOrganics/vue-test-utils-helpers.git"
   },
   "eslintConfig": {
     "root": true,
