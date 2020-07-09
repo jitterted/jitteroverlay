@@ -113,8 +113,8 @@
       },
       createWebSocketAndSubscribeWith(callback) {
         const client = new Client({
-          brokerURL: "ws://jitterted-webhook-proxy.herokuapp.com/api/ws"
-          // brokerURL: "ws://4cae77f50ec5.ngrok.io/api/ws"
+          brokerURL: "wss://jitterted-webhook-proxy.herokuapp.com/api/ws"
+          // brokerURL: "wss://4cae77f50ec5.ngrok.io/api/ws"
           , debug: function (str) {
             console.log(str);
           }
