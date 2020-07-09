@@ -12,10 +12,6 @@
             </span>
             <p class="ml-3 font-medium text-4xl text-white truncate">
               Currently: {{ currentlyDoing }}
-              <!--               ☕️ Blackjack - Continue to Build Up the State Pattern-->
-              <!--               ☕️ Blackjack - Refactoring to Transition-based State Machine-->
-              <!--              Fixing the JitterShout Twitch Team Shout-out Bot-->
-              <!--              Add Spring-based User Interface to Yacht (Yahtzee-like game)-->
             </p>
           </div>
           <div class="flex-shrink-0">
@@ -132,7 +128,7 @@
     },
     created() {
       this.updateCurrentTask();
-      this.refreshTimeLeft();
+      this.updateStreamEndTimeFromTrello();
       this.interval = setInterval(() => this.refreshTimeLeft(), 30000);
       this.client = this.createWebSocketAndSubscribeWith(this.websocketMessageDispatcher);
     },
