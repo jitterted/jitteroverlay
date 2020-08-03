@@ -28,13 +28,20 @@ This is information I could have used when initially creating this project...
       }
       ``` 
 
-## TO DO for Today
+## TO DO
 
-1. Get list id for the Stream Schedule list from Trello
-2. Add webhook registration for that list
-3. Get first card in that list
-4. Parse contents of "name" as a time
-5. Updated timeLeft property to use new time
+[ ] Title of schedule card would be something like "countdown mm:ss"
+    [X] When dragged to top of "schedule" list, countdown timer begins
+    * When non-"countdown" card is at the top, revert to normal "stream end time"
+[ ] Easily customize the "Stream ends in" text, so I can make it "Class ends in"
+
+## DONE
+
+[X] Get list id for the Stream Schedule list from Trello
+[X] Add webhook registration for that list
+[X] Get first card in that list
+[X] Parse contents of "name" as a time
+[X] Updated timeLeft property to use new time
 
 ## Lessons Learned
 
