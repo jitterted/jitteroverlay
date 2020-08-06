@@ -27,6 +27,7 @@ describe('Overlay Stream End Time-Based Countdown', () => {
   })
 
   it('creates correct hour and minute text for 1 hour and 1 minute left', async () => {
+    wrapper.vm.$data.streamEndTimerMode = true
     setTimeLeftMsTo(1, 1, 0)
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.timeLeft).toStrictEqual('1h 1m')

@@ -38,6 +38,7 @@ export default {
   name: 'Overlay',
   data() {
     return {
+      streamEndTimerMode: true,
       streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
       timeLeftMs: 0,
       countdownPrefix: 'Stream ends in ',
@@ -52,11 +53,13 @@ export default {
     },
     computed: {
       timeLeft() {
-        if (this.isLessThanOneMinuteRemaining()) {
+        if (this.streamEndTimerMode && this.isLessThanOneMinuteRemaining()) {
           return "less than 1 minute";
-        } else {
-          return this.formatTimeInMs(this.timeLeftMs);
         }
+        if (this.isEnded()) {
+          return "ENDED"
+        }
+        return this.formatTimeInMs(this.timeLeftMs);
       },
       isWarningTime() {
         return this.timeLeftMs < this.warningTimeMs;
@@ -66,6 +69,9 @@ export default {
       }
     },
     methods: {
+      isEnded() {
+        return this.timeLeftMs < 0;
+      },
       formatTimeInMs(timeLeftMs) {
         const totalTimeLeftInSeconds = timeLeftMs / 1000;
         const totalTimeLeftInMinutes = totalTimeLeftInSeconds / 60;
@@ -123,10 +129,12 @@ export default {
       },
       updateCountdownBasedOnNewCardTitle(cardTitle) {
         if (cardTitle.toLowerCase().startsWith("countdown ")) {
+          this.streamEndTimerMode = false
           const {left: minutes, right: seconds} = this.parseCountdownAsMinutesSeconds(cardTitle)
           this.countdownPrefix = this.parseCountdownTitleFrom(cardTitle)
           this.streamEndDateTime = addMinutes(addSeconds(Date.now(), seconds), minutes)
         } else {
+          this.streamEndTimerMode = true
           const {left: hours, right: minutes} = this.parseTimeComponents(cardTitle)
           this.countdownPrefix = "Stream ends in "
           this.streamEndDateTime = addMinutes(addHours(startOfToday(), hours), minutes);
