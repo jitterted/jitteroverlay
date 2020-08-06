@@ -16,7 +16,7 @@
           </div>
           <div class="flex-shrink-0">
             <p class="px-2 py-1 ml-3 font-medium text-3xl truncate transition duration-500"
-               v-bind:class="[isNoteTime ? noteTimeColorClasses : normalColorClasses]"
+               v-bind:class="[isWarningTime ? warningTimeColorClasses : normalColorClasses]"
             >
               {{ countdownPrefix }} <span class="tabular-nums">{{ timeLeft }}</span>
             </p>
@@ -28,27 +28,27 @@
 </template>
 
 <script>
-  import startOfToday from 'date-fns/startOfToday'
-  import addHours from 'date-fns/addHours'
-  import addMinutes from 'date-fns/addMinutes'
-  import addSeconds from 'date-fns/addSeconds'
-  import {Client} from '@stomp/stompjs';
+import startOfToday from 'date-fns/startOfToday'
+import addHours from 'date-fns/addHours'
+import addMinutes from 'date-fns/addMinutes'
+import addSeconds from 'date-fns/addSeconds'
+import {Client} from '@stomp/stompjs';
 
-  export default {
-    name: 'Overlay',
-    data() {
-      return {
-        streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
-        timeLeftMs: 0,
-        countdownPrefix: 'Stream ends in ',
-        interval: undefined,
-        noteTimeMs: 10 * 60 * 1000, // 10 minutes
-        normalColorClasses: 'text-orange-200',
-        noteTimeColorClasses: 'text-indigo-800 bg-orange-200',
-        trelloTask: 'placeholder',
-        subscription: undefined,
-        client: undefined
-      }
+export default {
+  name: 'Overlay',
+  data() {
+    return {
+      streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
+      timeLeftMs: 0,
+      countdownPrefix: 'Stream ends in ',
+      interval: undefined,
+      warningTimeMs: 10 * 60 * 1000, // 10 minutes
+      normalColorClasses: 'text-orange-200',
+      warningTimeColorClasses: 'text-indigo-800 bg-orange-200',
+      trelloTask: 'placeholder',
+      subscription: undefined,
+      client: undefined
+    }
     },
     computed: {
       timeLeft() {
@@ -58,8 +58,8 @@
           return this.formatTimeInMs(this.timeLeftMs);
         }
       },
-      isNoteTime() {
-        return this.timeLeftMs < this.noteTimeMs;
+      isWarningTime() {
+        return this.timeLeftMs < this.warningTimeMs;
       },
       currentlyDoing() {
         return this.trelloTask

@@ -60,16 +60,16 @@ describe('Overlay Stream End Time-Based Countdown', () => {
     expect(wrapper.vm.timeLeft).toBe('1h 59m')
   })
 
-  it('is not yet note time when more than note-time minutes remaining', async () => {
+  it('is not yet warning time when more than warning-time minutes remaining', async () => {
     wrapper.vm.$data.timeLeftMs = 11 * 60 * 1000; // 11 minutes remaining
-    wrapper.vm.$data.noteTimeMs = 10 * 60 * 1000; // 10 minute boundary
-    expect(wrapper.vm.isNoteTime).toBeFalsy()
+    wrapper.vm.$data.warningTimeMs = 10 * 60 * 1000; // 10 minute boundary
+    expect(wrapper.vm.isWarningTime).toBeFalsy()
   })
 
-  it('is note time when less than note-time minutes remaining', async () => {
+  it('is warning time when less than warning-time minutes remaining', async () => {
     wrapper.vm.$data.timeLeftMs = 10 * 60 * 1000 - 1000; // 9m59s remaining
-    wrapper.vm.$data.noteTimeMs = 10 * 60 * 1000; // 10 minute boundary
-    expect(wrapper.vm.isNoteTime).toBeTruthy()
+    wrapper.vm.$data.warningTimeMs = 10 * 60 * 1000; // 10 minute boundary
+    expect(wrapper.vm.isWarningTime).toBeTruthy()
   })
 
   it('switches to minutes and seconds when 30 or fewer minutes remain', async () => {
