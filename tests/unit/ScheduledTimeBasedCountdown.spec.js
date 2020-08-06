@@ -17,26 +17,26 @@ describe('Overlay Stream End Time-Based Countdown', () => {
   it('initialize time left to 0', () => {
     expect(typeof Overlay.data).toBe('function')
     const defaultData = Overlay.data()
-    expect(defaultData.timeLeftMs).toBe(0)
+    expect(defaultData.timeLeftMs).toStrictEqual(0)
   })
 
   it('shows "less than 1 minute" message if less than 1 minute remains', async () => {
     setTimeLeftMsTo(0, 0, 59)
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.timeLeft).toBe("less than 1 minute")
+    expect(wrapper.vm.timeLeft).toStrictEqual("less than 1 minute")
   })
 
   it('creates correct hour and minute text for 1 hour and 1 minute left', async () => {
     setTimeLeftMsTo(1, 1, 0)
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.timeLeft).toBe('1h 1m')
+    expect(wrapper.vm.timeLeft).toStrictEqual('1h 1m')
   })
 
   it('creates correct hour and minute text for 1 hour, 0 minutes, and 0 seconds left', async () => {
     setTimeLeftMsTo(1, 0, 0)
     expect(wrapper.vm.timeLeft).toBe('1h 0m')
     await wrapper.vm.$nextTick() // updates DOM from data changes
-    expect(wrapper.text()).toContain('Stream ends in 1h 0m')
+    expect(wrapper.vm.timeLeft).toStrictEqual('1h 0m')
   })
 
   it('creates correct hour and minute text for 1h0m0s minus 1ms left', async () => {
@@ -45,7 +45,7 @@ describe('Overlay Stream End Time-Based Countdown', () => {
     const seconds = 0
     wrapper.vm.$data.timeLeftMs = 1000 * ((hours * 60 * 60) + (minutes * 60) + (seconds)) - 1;
     await wrapper.vm.$nextTick()
-    expect(wrapper.vm.timeLeft).toBe('0h 59m')
+    expect(wrapper.vm.timeLeft).toStrictEqual('0h 59m')
   })
 
   // ZOM/BIES

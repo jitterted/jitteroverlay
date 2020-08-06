@@ -7,8 +7,8 @@ const wrapper = shallowMount(Overlay)
 
 describe('Countdown Timer-Based Time Left Display', () => {
   it('should show 10m 00s when first updated', async () => {
-    // This is not the best way to test clock-related functionality
-    // would need a way to inject the baseline "Date.now" for reals
+    // TODO: This is not the best way to test clock-related functionality
+    //       would need a way to inject the baseline "Date.now" for reals
     const tenMinutesFromNow = addMinutes(Date.now(), 10)
 
     wrapper.vm.updateCountdownBasedOnNewCardTitle("Countdown 10:00")
