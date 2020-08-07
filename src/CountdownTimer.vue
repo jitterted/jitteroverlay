@@ -12,11 +12,13 @@ export default {
   name: 'countdownTimer',
   props: {
     countdownPrefix: {},
-    timeLeftMs: {},
-    streamEndTimerMode: {}
+    streamEndTimerMode: {},
+    streamEndDateTime: {}
   },
   data() {
     return {
+      timeLeftMs: 0,
+      interval: undefined,
       warningTimeMs: 10 * 60 * 1000, // 10 minutes
       normalColorClasses: 'text-orange-200',
       warningTimeColorClasses: 'text-indigo-800 bg-orange-200',
@@ -37,6 +39,9 @@ export default {
     },
   },
   methods: {
+    refreshTimeLeft() {
+      this.timeLeftMs = this.streamEndDateTime - Date.now();
+    },
     isEnded() {
       return this.timeLeftMs < 0;
     },
@@ -54,6 +59,12 @@ export default {
     isLessThanOneMinuteRemaining() {
       return this.timeLeftMs < 60000;
     },
+  },
+  created() {
+    this.interval = setInterval(() => this.refreshTimeLeft(), 1000);
+  },
+  beforeDestroy() {
+    if (this.interval) clearInterval(this.interval);
   }
 }
 </script>

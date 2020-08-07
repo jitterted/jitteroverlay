@@ -16,8 +16,8 @@
           </div>
           <countdownTimer
               :countdown-prefix="countdownPrefix"
-              :timeLeftMs="timeLeftMs"
               :streamEndTimerMode="streamEndTimerMode"
+              :streamEndDateTime="streamEndDateTime"
           />
         </div>
       </div>
@@ -40,9 +40,7 @@ export default {
     return {
       streamEndTimerMode: true,
       streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
-      timeLeftMs: 0,
       countdownPrefix: 'Stream ends in ',
-      interval: undefined,
       trelloTask: 'placeholder',
       subscription: undefined,
       client: undefined
@@ -54,9 +52,6 @@ export default {
     }
   },
   methods: {
-    refreshTimeLeft() {
-      this.timeLeftMs = this.streamEndDateTime - Date.now();
-    },
     websocketMessageDispatcher(event) {
         const message = JSON.parse(event.body);
         console.log("Event received:", message);
@@ -138,11 +133,9 @@ export default {
     created() {
       this.updateCurrentTask();
       this.updateStreamEndTimeFromTrello();
-      this.interval = setInterval(() => this.refreshTimeLeft(), 1000);
       this.client = this.createWebSocketAndSubscribeWith(this.websocketMessageDispatcher);
     },
     beforeDestroy() {
-      if (this.interval) clearInterval(this.interval);
       if (this.subscription) this.subscription.unsubscribe();
       if (this.client) this.client.deactivate();
     }
