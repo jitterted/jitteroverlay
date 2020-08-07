@@ -12,6 +12,8 @@ import addMinutes from "date-fns/addMinutes";
 import addSeconds from "date-fns/addSeconds";
 import addHours from "date-fns/addHours";
 import startOfToday from "date-fns/startOfToday";
+import {CountdownTimerRenderer} from "@/CountdownTimerRenderer";
+import {StreamEndTimerRenderer} from "@/StreamEndTimerRenderer";
 
 export default {
   name: 'countdownTimer',
@@ -28,17 +30,17 @@ export default {
       streamEndTimerMode: true,
       endDateTime: addMinutes(addHours(startOfToday(), 16), 5),
       countdownPrefix: 'Stream ends in ',
+      countdownTimerRenderer: new CountdownTimerRenderer(),
+      streamEndTimerRenderer: new StreamEndTimerRenderer()
     }
   },
   computed: {
     timeLeft() {
-      if (this.streamEndTimerMode && this.isLessThanOneMinuteRemaining()) {
-        return "less than 1 minute";
+      if (this.streamEndTimerMode) {
+        return this.streamEndTimerRenderer.render(this.timeLeftMs)
+      } else {
+        return this.countdownTimerRenderer.render(this.timeLeftMs)
       }
-      if (this.isEnded()) {
-        return "ENDED"
-      }
-      return this.formatTimeInMs(this.timeLeftMs);
     },
     isWarningTime() {
       return this.timeLeftMs < this.warningTimeMs;
@@ -47,23 +49,6 @@ export default {
   methods: {
     refreshTimeLeft() {
       this.timeLeftMs = this.endDateTime - Date.now();
-    },
-    isEnded() {
-      return this.timeLeftMs < 0;
-    },
-    formatTimeInMs(timeLeftMs) {
-      const totalTimeLeftInSeconds = timeLeftMs / 1000;
-      const totalTimeLeftInMinutes = totalTimeLeftInSeconds / 60;
-      const timeLeftHours = Math.floor(totalTimeLeftInMinutes / 60);
-      const timeLeftMinutes = Math.floor(totalTimeLeftInMinutes - (timeLeftHours * 60));
-      if (totalTimeLeftInMinutes >= 30) {
-        return timeLeftHours + "h " + timeLeftMinutes + "m";
-      }
-      const timeLeftSeconds = Math.floor(totalTimeLeftInSeconds - (timeLeftMinutes * 60));
-      return timeLeftMinutes + "m " + timeLeftSeconds + "s";
-    },
-    isLessThanOneMinuteRemaining() {
-      return this.timeLeftMs < 60000;
     },
 
     parseTimeComponents: function (countdownTime) {
