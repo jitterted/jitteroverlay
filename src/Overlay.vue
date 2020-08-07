@@ -14,13 +14,11 @@
               Currently: {{ currentlyDoing }}
             </p>
           </div>
-          <div class="flex-shrink-0">
-            <p class="px-2 py-1 ml-3 font-medium text-3xl truncate transition duration-500"
-               v-bind:class="[isWarningTime ? warningTimeColorClasses : normalColorClasses]"
-            >
-              {{ countdownPrefix }} <span class="tabular-nums">{{ timeLeft }}</span>
-            </p>
-          </div>
+          <countdownTimer
+              :countdown-prefix="countdownPrefix"
+              :timeLeftMs="timeLeftMs"
+              :streamEndTimerMode="streamEndTimerMode"
+          />
         </div>
       </div>
     </div>
@@ -33,9 +31,11 @@ import addHours from 'date-fns/addHours'
 import addMinutes from 'date-fns/addMinutes'
 import addSeconds from 'date-fns/addSeconds'
 import {Client} from '@stomp/stompjs';
+import CountdownTimer from "@/CountdownTimer";
 
 export default {
   name: 'Overlay',
+  components: {CountdownTimer},
   data() {
     return {
       streamEndTimerMode: true,
@@ -43,53 +43,21 @@ export default {
       timeLeftMs: 0,
       countdownPrefix: 'Stream ends in ',
       interval: undefined,
-      warningTimeMs: 10 * 60 * 1000, // 10 minutes
-      normalColorClasses: 'text-orange-200',
-      warningTimeColorClasses: 'text-indigo-800 bg-orange-200',
       trelloTask: 'placeholder',
       subscription: undefined,
       client: undefined
     }
+  },
+  computed: {
+    currentlyDoing() {
+      return this.trelloTask
+    }
+  },
+  methods: {
+    refreshTimeLeft() {
+      this.timeLeftMs = this.streamEndDateTime - Date.now();
     },
-    computed: {
-      timeLeft() {
-        if (this.streamEndTimerMode && this.isLessThanOneMinuteRemaining()) {
-          return "less than 1 minute";
-        }
-        if (this.isEnded()) {
-          return "ENDED"
-        }
-        return this.formatTimeInMs(this.timeLeftMs);
-      },
-      isWarningTime() {
-        return this.timeLeftMs < this.warningTimeMs;
-      },
-      currentlyDoing() {
-        return this.trelloTask
-      }
-    },
-    methods: {
-      isEnded() {
-        return this.timeLeftMs < 0;
-      },
-      formatTimeInMs(timeLeftMs) {
-        const totalTimeLeftInSeconds = timeLeftMs / 1000;
-        const totalTimeLeftInMinutes = totalTimeLeftInSeconds / 60;
-        const timeLeftHours = Math.floor(totalTimeLeftInMinutes / 60);
-        const timeLeftMinutes = Math.floor(totalTimeLeftInMinutes - (timeLeftHours * 60));
-        if (totalTimeLeftInMinutes >= 30) {
-          return timeLeftHours + "h " + timeLeftMinutes + "m";
-        }
-        const timeLeftSeconds = Math.floor(totalTimeLeftInSeconds - (timeLeftMinutes * 60));
-        return timeLeftMinutes + "m " + timeLeftSeconds + "s";
-      },
-      isLessThanOneMinuteRemaining() {
-        return this.timeLeftMs < 60000;
-      },
-      refreshTimeLeft() {
-        this.timeLeftMs = this.streamEndDateTime - Date.now();
-      },
-      websocketMessageDispatcher(event) {
+    websocketMessageDispatcher(event) {
         const message = JSON.parse(event.body);
         console.log("Event received:", message);
         console.log("Callback Name:", message.callbackName);
@@ -181,8 +149,3 @@ export default {
   }
 </script>
 
-<style>
-  .tabular-nums {
-    font-variant-numeric: tabular-nums;
-  }
-</style>
