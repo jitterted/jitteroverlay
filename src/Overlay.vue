@@ -45,18 +45,18 @@ export default {
   },
   methods: {
     websocketMessageDispatcher(event) {
-        const message = JSON.parse(event.body);
-        console.log("Event received:", message);
-        console.log("Callback Name:", message.callbackName);
-        if (message.callbackName === "stream_schedule") {
-          this.updateStreamEndTimeFromTrello();
-        } else if (message.callbackName === "doing") {
-          this.updateCurrentTask();
-        }
-      },
-      updateCurrentTask() {
-        const toDoListOfCardsUrl = 'https://api.trello.com/1/lists/5ee298bac53199290301955a/cards?fields=name';
-        fetch(toDoListOfCardsUrl)
+      const message = JSON.parse(event.body);
+      console.log("Event received:", message);
+      console.log("Callback Name:", message.callbackName);
+      if (message.callbackName === "stream_schedule") {
+        this.updateStreamEndTimeFromTrello();
+      } else if (message.callbackName === "doing") {
+        this.updateCurrentTask();
+      }
+    },
+    updateCurrentTask() {
+      const toDoListOfCardsUrl = 'https://api.trello.com/1/lists/5ee298bac53199290301955a/cards?fields=name';
+      fetch(toDoListOfCardsUrl)
           .then(response => response.json())
           .then(cards => {
             if (cards.length > 1) {
@@ -65,41 +65,41 @@ export default {
               this.trelloTask = "Nothing...yet?"
             }
           });
-      },
-      updateStreamEndTimeFromTrello() {
-        console.log("Updating Stream Schedule, fetching from Trello...");
-        const streamScheduleCardListUrl = "https://api.trello.com/1/lists/5ef67927c7c4100d3998a842/cards?fields=name";
-        fetch(streamScheduleCardListUrl)
+    },
+    updateStreamEndTimeFromTrello() {
+      console.log("Updating Stream Schedule, fetching from Trello...");
+      const streamScheduleCardListUrl = "https://api.trello.com/1/lists/5ef67927c7c4100d3998a842/cards?fields=name";
+      fetch(streamScheduleCardListUrl)
           .then(response => response.json())
           .then(cards => {
             console.log("Cards from Stream Schedule list: ", cards)
             this.cardTitle = cards[0].name;
           })
-      },
-      createWebSocketAndSubscribeWith(callback) {
-        const client = new Client({
-          brokerURL: "wss://jitterted-webhook-proxy.herokuapp.com/api/ws"
-          // brokerURL: "wss://4cae77f50ec5.ngrok.io/api/ws"
-          , debug: function (str) {
-            console.log(str);
-          }
-        });
-        client.onConnect = function () {
-          this.subscription = client.subscribe("/topic/trello", callback);
+    },
+    createWebSocketAndSubscribeWith(callback) {
+      const client = new Client({
+        brokerURL: "wss://jitterted-webhook-proxy.herokuapp.com/api/ws"
+        // brokerURL: "wss://4cae77f50ec5.ngrok.io/api/ws"
+        , debug: function (str) {
+          console.log(str);
         }
-        client.activate();
-        return client;
-      },
+      });
+      client.onConnect = function () {
+        this.subscription = client.subscribe("/topic/trello", callback);
+      }
+      client.activate();
+      return client;
     },
-    created() {
-      this.updateCurrentTask();
-      this.updateStreamEndTimeFromTrello();
-      this.client = this.createWebSocketAndSubscribeWith(this.websocketMessageDispatcher);
-    },
-    beforeDestroy() {
-      if (this.subscription) this.subscription.unsubscribe();
-      if (this.client) this.client.deactivate();
-    }
+  },
+  created() {
+    this.updateCurrentTask();
+    this.updateStreamEndTimeFromTrello();
+    this.client = this.createWebSocketAndSubscribeWith(this.websocketMessageDispatcher);
+  },
+  beforeDestroy() {
+    if (this.subscription) this.subscription.unsubscribe();
+    if (this.client) this.client.deactivate();
   }
+}
 </script>
 

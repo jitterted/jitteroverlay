@@ -1,8 +1,8 @@
 import {shallowMount} from '@vue/test-utils'
-import Overlay from '@/Overlay.vue'
+import CountdownTimer from "@/CountdownTimer";
 import addMinutes from 'date-fns/addMinutes'
 
-const wrapper = shallowMount(Overlay)
+const wrapper = shallowMount(CountdownTimer)
 
 describe('Countdown/Elapsed Timer-Based Time Left Display', () => {
   it.skip('should show 10m 00s when first updated', async () => {
@@ -47,23 +47,4 @@ describe('Countdown/Elapsed Timer-Based Time Left Display', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.vm.timeLeft).toStrictEqual("ENDED")
   });
-
-  it('should turn off streamEndTimerMode when countdown card title comes in', async () => {
-    wrapper.vm.$data.streamEndTimerMode = true
-
-    wrapper.vm.updateCountdownBasedOnNewCardTitle("Countdown 10:00")
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.vm.$data.streamEndTimerMode).toBeFalsy()
-  })
-
-  it('should turn on streamEndTimerMode when regular stream schedule card title comes in', async () => {
-    wrapper.vm.$data.streamEndTimerMode = false
-
-    wrapper.vm.updateCountdownBasedOnNewCardTitle("17:00")
-    await wrapper.vm.$nextTick()
-
-    expect(wrapper.vm.$data.streamEndTimerMode).toBeTruthy()
-  })
-
 })

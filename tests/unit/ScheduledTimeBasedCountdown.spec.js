@@ -1,24 +1,14 @@
 import {shallowMount} from '@vue/test-utils'
-import Overlay from '@/Overlay.vue'
+import CountdownTimer from "@/CountdownTimer";
 
 // Mount the component
-const wrapper = shallowMount(Overlay)
+const wrapper = shallowMount(CountdownTimer)
 
 function setTimeLeftMsTo(hours, minutes, seconds) {
   wrapper.vm.$data.timeLeftMs = 1000 * ((hours * 60 * 60) + (minutes * 60) + (seconds));
 }
 
-describe('Overlay Stream End Time-Based Countdown', () => {
-  // Inspect the raw component options
-  it('has a "created" hook', () => {
-    expect(typeof Overlay.created).toBe('function')
-  })
-
-  it('initialize time left to 0', () => {
-    expect(typeof Overlay.data).toBe('function')
-    const defaultData = Overlay.data()
-    expect(defaultData.timeLeftMs).toStrictEqual(0)
-  })
+describe('Countdown Timer', () => {
 
   it('shows "less than 1 minute" message if less than 1 minute remains', async () => {
     setTimeLeftMsTo(0, 0, 59)
@@ -77,7 +67,6 @@ describe('Overlay Stream End Time-Based Countdown', () => {
     const twentyNineMinutes59Seconds = (29 * 60 + 59) * 1000
     expect(wrapper.vm.formatTimeInMs(twentyNineMinutes59Seconds)).toStrictEqual("29m 59s")
   })
-
 
   it('uses hours and minutes when exactly 30 minutes remain', async () => {
     const thirtyMinutes = (30 * 60) * 1000;
