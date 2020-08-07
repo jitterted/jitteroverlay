@@ -8,12 +8,15 @@
   </div>
 </template>
 <script>
+import addMinutes from "date-fns/addMinutes";
+import addSeconds from "date-fns/addSeconds";
+import addHours from "date-fns/addHours";
+import startOfToday from "date-fns/startOfToday";
+
 export default {
   name: 'countdownTimer',
   props: {
-    countdownPrefix: {},
-    streamEndTimerMode: {},
-    streamEndDateTime: {}
+    cardTitle: {},
   },
   data() {
     return {
@@ -22,6 +25,9 @@ export default {
       warningTimeMs: 10 * 60 * 1000, // 10 minutes
       normalColorClasses: 'text-orange-200',
       warningTimeColorClasses: 'text-indigo-800 bg-orange-200',
+      streamEndTimerMode: true,
+      streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
+      countdownPrefix: 'Stream ends in ',
     }
   },
   computed: {
@@ -58,6 +64,39 @@ export default {
     },
     isLessThanOneMinuteRemaining() {
       return this.timeLeftMs < 60000;
+    },
+
+    parseTimeComponents: function (countdownTime) {
+      const timeComponents = countdownTime.split(':');
+      const left = timeComponents[0]
+      const right = timeComponents[1]
+      return {left, right}
+    },
+    parseCountdownAsMinutesSeconds(text) {
+      const finalSpaceIndex = text.lastIndexOf(' ');
+      const countdownTime = text.substring(finalSpaceIndex + 1)
+      return this.parseTimeComponents(countdownTime);
+    },
+    parseCountdownTitleFrom(text) {
+      const spaceAfterCountdown = text.indexOf(' ');
+      const finalSpaceIndex = text.lastIndexOf(' ');
+      return text.substring(spaceAfterCountdown + 1, finalSpaceIndex)
+    },
+  },
+  watch: {
+    cardTitle: function (newCardTitle) {
+      if (newCardTitle.toLowerCase().startsWith("countdown ")) {
+        this.streamEndTimerMode = false
+        const {left: minutes, right: seconds} = this.parseCountdownAsMinutesSeconds(newCardTitle)
+        this.countdownPrefix = this.parseCountdownTitleFrom(newCardTitle)
+        this.streamEndDateTime = addMinutes(addSeconds(Date.now(), seconds), minutes)
+      } else {
+        this.streamEndTimerMode = true
+        const {left: hours, right: minutes} = this.parseTimeComponents(newCardTitle)
+        this.countdownPrefix = "Stream ends in "
+        this.streamEndDateTime = addMinutes(addHours(startOfToday(), hours), minutes);
+      }
+      this.refreshTimeLeft();
     },
   },
   created() {

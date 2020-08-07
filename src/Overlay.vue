@@ -15,9 +15,7 @@
             </p>
           </div>
           <countdownTimer
-              :countdown-prefix="countdownPrefix"
-              :streamEndTimerMode="streamEndTimerMode"
-              :streamEndDateTime="streamEndDateTime"
+              :cardTitle="cardTitle"
           />
         </div>
       </div>
@@ -26,10 +24,6 @@
 </template>
 
 <script>
-import startOfToday from 'date-fns/startOfToday'
-import addHours from 'date-fns/addHours'
-import addMinutes from 'date-fns/addMinutes'
-import addSeconds from 'date-fns/addSeconds'
 import {Client} from '@stomp/stompjs';
 import CountdownTimer from "@/CountdownTimer";
 
@@ -38,12 +32,10 @@ export default {
   components: {CountdownTimer},
   data() {
     return {
-      streamEndTimerMode: true,
-      streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
-      countdownPrefix: 'Stream ends in ',
       trelloTask: 'placeholder',
       subscription: undefined,
-      client: undefined
+      client: undefined,
+      cardTitle: undefined
     }
   },
   computed: {
@@ -74,36 +66,6 @@ export default {
             }
           });
       },
-      parseTimeComponents: function (countdownTime) {
-        const timeComponents = countdownTime.split(':');
-        const left = timeComponents[0]
-        const right = timeComponents[1]
-        return {left, right}
-      },
-      parseCountdownAsMinutesSeconds(text) {
-        const finalSpaceIndex = text.lastIndexOf(' ');
-        const countdownTime = text.substring(finalSpaceIndex + 1)
-        return this.parseTimeComponents(countdownTime);
-      },
-      parseCountdownTitleFrom(text) {
-        const spaceAfterCountdown = text.indexOf(' ');
-        const finalSpaceIndex = text.lastIndexOf(' ');
-        return text.substring(spaceAfterCountdown + 1, finalSpaceIndex)
-      },
-      updateCountdownBasedOnNewCardTitle(cardTitle) {
-        if (cardTitle.toLowerCase().startsWith("countdown ")) {
-          this.streamEndTimerMode = false
-          const {left: minutes, right: seconds} = this.parseCountdownAsMinutesSeconds(cardTitle)
-          this.countdownPrefix = this.parseCountdownTitleFrom(cardTitle)
-          this.streamEndDateTime = addMinutes(addSeconds(Date.now(), seconds), minutes)
-        } else {
-          this.streamEndTimerMode = true
-          const {left: hours, right: minutes} = this.parseTimeComponents(cardTitle)
-          this.countdownPrefix = "Stream ends in "
-          this.streamEndDateTime = addMinutes(addHours(startOfToday(), hours), minutes);
-        }
-        this.refreshTimeLeft();
-      },
       updateStreamEndTimeFromTrello() {
         console.log("Updating Stream Schedule, fetching from Trello...");
         const streamScheduleCardListUrl = "https://api.trello.com/1/lists/5ef67927c7c4100d3998a842/cards?fields=name";
@@ -111,8 +73,7 @@ export default {
           .then(response => response.json())
           .then(cards => {
             console.log("Cards from Stream Schedule list: ", cards)
-            const cardTitle = cards[0].name;
-            this.updateCountdownBasedOnNewCardTitle(cardTitle);
+            this.cardTitle = cards[0].name;
           })
       },
       createWebSocketAndSubscribeWith(callback) {
