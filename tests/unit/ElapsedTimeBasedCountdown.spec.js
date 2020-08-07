@@ -13,7 +13,7 @@ describe('Countdown/Elapsed Timer-Based Time Left Display', () => {
     wrapper.vm.updateCountdownBasedOnNewCardTitle("Countdown 10:00")
     await wrapper.vm.$nextTick()
 
-    expect(wrapper.vm.streamEndDateTime).toStrictEqual(tenMinutesFromNow)
+    expect(wrapper.vm.endDateTime).toStrictEqual(tenMinutesFromNow)
   })
 
   it('should parse countdown time components into two parts', async () => {

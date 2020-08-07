@@ -11,7 +11,7 @@ describe('Stream end time', () => {
     await wrapper.setProps({cardTitle: "16:00"})
 
     const todayAt4pmDate = addHours(startOfToday(), 16)
-    expect(wrapper.vm.$data.streamEndDateTime).toStrictEqual(todayAt4pmDate)
+    expect(wrapper.vm.$data.endDateTime).toStrictEqual(todayAt4pmDate)
   })
 
 })

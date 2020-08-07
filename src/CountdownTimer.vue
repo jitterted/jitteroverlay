@@ -26,7 +26,7 @@ export default {
       normalColorClasses: 'text-orange-200',
       warningTimeColorClasses: 'text-indigo-800 bg-orange-200',
       streamEndTimerMode: true,
-      streamEndDateTime: addMinutes(addHours(startOfToday(), 16), 5),
+      endDateTime: addMinutes(addHours(startOfToday(), 16), 5),
       countdownPrefix: 'Stream ends in ',
     }
   },
@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     refreshTimeLeft() {
-      this.timeLeftMs = this.streamEndDateTime - Date.now();
+      this.timeLeftMs = this.endDateTime - Date.now();
     },
     isEnded() {
       return this.timeLeftMs < 0;
@@ -89,12 +89,12 @@ export default {
         this.streamEndTimerMode = false
         const {left: minutes, right: seconds} = this.parseCountdownAsMinutesSeconds(newCardTitle)
         this.countdownPrefix = this.parseCountdownTitleFrom(newCardTitle)
-        this.streamEndDateTime = addMinutes(addSeconds(Date.now(), seconds), minutes)
+        this.endDateTime = addMinutes(addSeconds(Date.now(), seconds), minutes)
       } else {
         this.streamEndTimerMode = true
         const {left: hours, right: minutes} = this.parseTimeComponents(newCardTitle)
         this.countdownPrefix = "Stream ends in "
-        this.streamEndDateTime = addMinutes(addHours(startOfToday(), hours), minutes);
+        this.endDateTime = addMinutes(addHours(startOfToday(), hours), minutes);
       }
       this.refreshTimeLeft();
     },
