@@ -27,6 +27,16 @@ describe('Countdown/Elapsed Timer-Based Time Left Display', () => {
     expect(title).toStrictEqual("Dark Mode for")
   })
 
+  it('countdown prefix should not include end message', async () => {
+    const title = wrapper.vm.parseCountdownTitleFrom("Countdown Stream Starts in 2:30 | Stream Starts in a few moments")
+    expect(title).toStrictEqual("Stream Starts in")
+  })
+
+  it('should use end message after pipe symbol separator', async () => {
+    const endMessage = wrapper.vm.parseCountdownEndMessageFrom("Countdown Stream Starts in 2:30 | Stream Starts in a few moments")
+    expect(endMessage).toStrictEqual("Stream Starts in a few moments")
+  })
+
   it('should show "0m 59s" message if only 59 seconds remains', async () => {
     wrapper.vm.$data.streamEndTimerMode = false
     wrapper.vm.$data.timeLeftMs = 59 * 1000; // 59,000ms = 59sec

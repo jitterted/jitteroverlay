@@ -1,9 +1,15 @@
 <template>
   <div class="flex-shrink-0">
-    <p class="px-2 py-1 ml-3 font-medium text-3xl truncate transition duration-500"
-       v-bind:class="[isWarningTime ? warningTimeColorClasses : normalColorClasses]"
+    <p
+        class="px-2 py-1 ml-3 font-medium text-3xl truncate transition duration-500"
+        v-bind:class="[isWarningTime ? warningTimeColorClasses : normalColorClasses]"
     >
-      {{ countdownPrefix }} <span class="tabular-nums">{{ timeLeft }}</span>
+      <span v-if="showCountdownTimer">
+        {{ countdownPrefix }} <span class="tabular-nums">{{ timeLeft }}</span>
+      </span>
+      <span>
+        {{ countdownEndMessage }}
+      </span>
     </p>
   </div>
 </template>
@@ -31,7 +37,9 @@ export default {
       endDateTime: addMinutes(addHours(startOfToday(), 16), 5),
       countdownPrefix: 'Stream ends in ',
       countdownTimerRenderer: new CountdownTimerRenderer(),
-      streamEndTimerRenderer: new StreamEndTimerRenderer()
+      streamEndTimerRenderer: new StreamEndTimerRenderer(),
+      showCountdownTimer: true,
+      countdownEndMessage: ''
     }
   },
   computed: {
@@ -52,28 +60,39 @@ export default {
     },
 
     parseTimeComponents: function (countdownTime) {
-      const timeComponents = countdownTime.split(':');
+      const timeComponents = countdownTime.split(':')
       const left = timeComponents[0]
       const right = timeComponents[1]
       return {left, right}
     },
     parseCountdownAsMinutesSeconds(text) {
-      const finalSpaceIndex = text.lastIndexOf(' ');
+      const finalSpaceIndex = text.lastIndexOf(' ')
       const countdownTime = text.substring(finalSpaceIndex + 1)
-      return this.parseTimeComponents(countdownTime);
+      return this.parseTimeComponents(countdownTime)
     },
     parseCountdownTitleFrom(text) {
-      const spaceAfterCountdown = text.indexOf(' ');
-      const finalSpaceIndex = text.lastIndexOf(' ');
+      if (text.includes(" | ")) {
+        text = text.split(' | ')[0]
+      }
+      const spaceAfterCountdown = text.indexOf(' ')
+      const finalSpaceIndex = text.lastIndexOf(' ')
       return text.substring(spaceAfterCountdown + 1, finalSpaceIndex)
     },
+    parseCountdownEndMessageFrom(text) {
+      return text.split(' | ')[1]
+    }
   },
   watch: {
+    parseCardTitle: function (newCardTitle) {
+      const countdownPrefix = this.parseCountdownTitleFrom(newCardTitle)
+      const {left: minutes, right: seconds} = this.parseCountdownAsMinutesSeconds(newCardTitle)
+      return {countdownPrefix, minutes, seconds}
+    },
     cardTitle: function (newCardTitle) {
       if (newCardTitle.toLowerCase().startsWith("countdown ")) {
         this.streamEndTimerMode = false
-        const {left: minutes, right: seconds} = this.parseCountdownAsMinutesSeconds(newCardTitle)
-        this.countdownPrefix = this.parseCountdownTitleFrom(newCardTitle)
+        const {countdownPrefix, minutes, seconds} = this.parseCardTitle(newCardTitle);
+        this.countdownPrefix = countdownPrefix
         this.endDateTime = addMinutes(addSeconds(Date.now(), seconds), minutes)
       } else {
         this.streamEndTimerMode = true

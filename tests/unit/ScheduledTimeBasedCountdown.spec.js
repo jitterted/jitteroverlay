@@ -63,19 +63,4 @@ describe('Countdown Timer', () => {
     expect(wrapper.vm.isWarningTime).toBeTruthy()
   })
 
-  it('switches to minutes and seconds when 30 or fewer minutes remain', async () => {
-    const twentyNineMinutes59Seconds = (29 * 60 + 59) * 1000
-    expect(wrapper.vm.formatTimeInMs(twentyNineMinutes59Seconds)).toStrictEqual("29m 59s")
-  })
-
-  it('uses hours and minutes when exactly 30 minutes remain', async () => {
-    const thirtyMinutes = (30 * 60) * 1000;
-    expect(wrapper.vm.formatTimeInMs(thirtyMinutes)).toStrictEqual("0h 30m")
-  })
-
-  it('uses hours and minutes when more than 30 minutes remain', async () => {
-    const thirtyMinutes1Second = (30 * 60 + 1) * 1000;
-    expect(wrapper.vm.formatTimeInMs(thirtyMinutes1Second)).toStrictEqual("0h 30m")
-  })
-
 })
