@@ -1,14 +1,51 @@
-export class CountdownTimerRenderer {
+import addMinutes from "date-fns/addMinutes"
+import addSeconds from "date-fns/addSeconds"
+import parseTimeComponents from "./parseTimeComponents"
 
-  render(timeLeftMs) {
-    if (this.isEnded(timeLeftMs)) {
-      return "ENDED"
+export class CountdownTimerRenderer {
+  countdownPrefix = "Stream ends in "
+  countdownEndMessage = "ENDED"
+
+  parseCountdownAsMinutesSeconds(text) {
+    const finalSpaceIndex = text.lastIndexOf(' ')
+    const countdownTime = text.substring(finalSpaceIndex + 1)
+    return parseTimeComponents(countdownTime)
+  }
+
+  parseCountdownTitleFrom(text) {
+    if (text.includes(" | ")) {
+      const split = text.split(' | ')
+      text = split[0]
+      this.countdownEndMessage = split[1]
     }
+    const spaceAfterCountdown = text.indexOf(' ')
+    const finalSpaceIndex = text.lastIndexOf(' ')
+    return text.substring(spaceAfterCountdown + 1, finalSpaceIndex)
+  }
+
+  parseCardTitleForCountdown(newCardTitle) {
+    const {countdownPrefix, minutes, seconds} = this.parseCardTitle(newCardTitle);
+    this.countdownPrefix = countdownPrefix
+    return addMinutes(addSeconds(Date.now(), seconds), minutes)
+  }
+
+  parseCardTitle(newCardTitle) {
+    const prefix = this.parseCountdownTitleFrom(newCardTitle)
+    this.countdownPrefix = prefix
+    const {left: minutes, right: seconds} = this.parseCountdownAsMinutesSeconds(newCardTitle)
+    return {prefix, minutes, seconds}
+  }
+
+  renderCountdownPrefix() {
+    return this.countdownPrefix
+  }
+
+  renderTimeLeftFor(timeLeftMs) {
     return this.formatTimeInMs(timeLeftMs)
   }
 
-  isEnded(timeLeftMs) {
-    return timeLeftMs < 0;
+  renderCountdownEndMessage() {
+    return this.countdownEndMessage
   }
 
   formatTimeInMs(timeLeftMs) {

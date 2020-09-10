@@ -1,9 +1,13 @@
 export class StreamEndTimerRenderer {
-  render(timeLeftMs) {
+  renderTimeLeftFor(timeLeftMs) {
     if (this.isLessThanOneMinuteRemaining(timeLeftMs)) {
       return "less than 1 minute";
     }
     return this.formatTimeInMs(timeLeftMs);
+  }
+
+  renderCountdownPrefix() {
+    return "Stream ends in "
   }
 
   isLessThanOneMinuteRemaining(timeLeftMs) {
