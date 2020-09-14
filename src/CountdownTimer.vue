@@ -18,7 +18,6 @@ import addMinutes from "date-fns/addMinutes";
 import addHours from "date-fns/addHours";
 import startOfToday from "date-fns/startOfToday";
 import {CountdownTimerRenderer} from "@/CountdownTimerRenderer";
-import {StreamEndTimerRenderer} from "@/StreamEndTimerRenderer";
 import parseTimeComponents from "@/parseTimeComponents";
 
 export default {
@@ -33,29 +32,19 @@ export default {
       warningTimeMs: 10 * 60 * 1000, // 10 minutes
       normalColorClasses: 'text-orange-200',
       warningTimeColorClasses: 'text-indigo-800 bg-orange-200',
-      streamEndTimerMode: true,
       endDateTime: addMinutes(addHours(startOfToday(), 16), 5),
       countdownTimerRenderer: new CountdownTimerRenderer(),
-      streamEndTimerRenderer: new StreamEndTimerRenderer(),
     }
   },
   computed: {
     timeLeft() {
-      if (this.streamEndTimerMode) {
-        return this.streamEndTimerRenderer.renderTimeLeftFor(this.timeLeftMs)
-      } else {
-        return this.countdownTimerRenderer.renderTimeLeftFor(this.timeLeftMs)
-      }
+      return this.countdownTimerRenderer.renderTimeLeftFor(this.timeLeftMs)
     },
     isWarningTime() {
       return this.timeLeftMs < this.warningTimeMs;
     },
     countdownPrefix() {
-      if (this.streamEndTimerMode) {
-        return this.streamEndTimerRenderer.renderCountdownPrefix()
-      } else {
-        return this.countdownTimerRenderer.renderCountdownPrefix()
-      }
+      return this.countdownTimerRenderer.renderCountdownPrefix()
     },
     countdownEndMessage() {
       return this.countdownTimerRenderer.renderCountdownEndMessage()
@@ -72,14 +61,13 @@ export default {
   watch: {
     cardTitle: function (newCardTitle) {
       if (newCardTitle.toLowerCase().startsWith("countdown ")) {
-        this.streamEndTimerMode = false
         this.endDateTime = this.countdownTimerRenderer.parseCardTitleForCountdown(newCardTitle)
       } else {
-        this.streamEndTimerMode = true
+        this.countdownTimerRenderer.switchToStreamSchedule()
         const {left: hours, right: minutes} = parseTimeComponents(newCardTitle)
         this.endDateTime = addMinutes(addHours(startOfToday(), hours), minutes)
       }
-      this.refreshTimeLeft();
+      this.refreshTimeLeft()
     },
   },
   created() {

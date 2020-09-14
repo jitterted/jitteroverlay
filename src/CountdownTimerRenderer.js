@@ -4,36 +4,47 @@ import parseTimeComponents from "./parseTimeComponents"
 
 export class CountdownTimerRenderer {
   countdownPrefix = "Stream ends in "
-  countdownEndMessage = "ENDED"
+  countdownEndMessage = "Stream will end shortly"
 
   parseCountdownAsMinutesSeconds(text) {
-    const finalSpaceIndex = text.lastIndexOf(' ')
-    const countdownTime = text.substring(finalSpaceIndex + 1)
-    return parseTimeComponents(countdownTime)
-  }
+    const spaceBeforeTimeComponents = text.lastIndexOf(' ')
+    const countdownTime = text.substring(spaceBeforeTimeComponents + 1)
 
-  parseCountdownTitleFrom(text) {
-    if (text.includes(" | ")) {
-      const split = text.split(' | ')
-      text = split[0]
-      this.countdownEndMessage = split[1]
-    }
-    const spaceAfterCountdown = text.indexOf(' ')
-    const finalSpaceIndex = text.lastIndexOf(' ')
-    return text.substring(spaceAfterCountdown + 1, finalSpaceIndex)
+    const {left: minutes, right: seconds} = parseTimeComponents(countdownTime)
+
+    return {minutes, seconds}
   }
 
   parseCardTitleForCountdown(newCardTitle) {
-    const {countdownPrefix, minutes, seconds} = this.parseCardTitle(newCardTitle);
-    this.countdownPrefix = countdownPrefix
+    const {minutes, seconds} = this.parseCardTitle(newCardTitle);
+    // return new end date/time
     return addMinutes(addSeconds(Date.now(), seconds), minutes)
   }
 
   parseCardTitle(newCardTitle) {
-    const prefix = this.parseCountdownTitleFrom(newCardTitle)
-    this.countdownPrefix = prefix
-    const {left: minutes, right: seconds} = this.parseCountdownAsMinutesSeconds(newCardTitle)
-    return {prefix, minutes, seconds}
+    const textWithoutAlternateEndMessage = this.Cowabunga(newCardTitle);
+
+    this.countdownPrefix = this.extractCountdownMessage(textWithoutAlternateEndMessage)
+
+    return this.parseCountdownAsMinutesSeconds(textWithoutAlternateEndMessage)
+  }
+
+  extractCountdownMessage(text) {
+    // comes in as "Countdown countdown message here 15:45"
+    const spaceAfterTheWordCountdown = text.indexOf(' ') // drop the "Countdown" word
+    const finalSpaceIndex = text.lastIndexOf(' ') // space before the time components
+    return text.substring(spaceAfterTheWordCountdown + 1, finalSpaceIndex);
+  }
+
+  Cowabunga(text) {
+    if (text.includes(" | ")) {
+      const split = text.split(' | ')
+      text = split[0]
+      this.countdownEndMessage = split[1]
+    } else {
+      this.countdownEndMessage = undefined
+    }
+    return text;
   }
 
   renderCountdownPrefix() {
@@ -45,6 +56,9 @@ export class CountdownTimerRenderer {
   }
 
   renderCountdownEndMessage() {
+    if (this.countdownEndMessage === undefined) {
+      return this.countdownPrefix + " ENDED"
+    }
     return this.countdownEndMessage
   }
 
@@ -60,4 +74,8 @@ export class CountdownTimerRenderer {
     return timeLeftMinutes + "m " + timeLeftSeconds + "s";
   }
 
+  switchToStreamSchedule() {
+    this.countdownPrefix = "Stream ends in"
+    this.countdownEndMessage = "Stream will end shortly"
+  }
 }

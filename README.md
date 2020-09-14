@@ -30,13 +30,15 @@ This is information I could have used when initially creating this project...
 
 ## TO DO
 
-[ ] Title of schedule card would be something like "countdown mm:ss"
-    [X] When dragged to top of "schedule" list, countdown timer begins
-    * When non-"countdown" card is at the top, revert to normal "stream end time"
-[ ] Easily customize the "Stream ends in" text, so I can make it "Class ends in"
+[ ] Customize "warning" time depending on type of countdown
+[ ] Performance optimization: turn off setInterval when isTimerExpired = true
 
 ## DONE
 
+[X] Title of schedule card would be something like "countdown mm:ss"
+    [X] When dragged to top of "schedule" list, countdown timer begins
+    * When non-"countdown" card is at the top, revert to normal "stream end time"
+[X] Easily customize the "Stream ends in" text, so I can make it "Class ends in"
 [X] Get list id for the Stream Schedule list from Trello
 [X] Add webhook registration for that list
 [X] Get first card in that list
